@@ -14,3 +14,4 @@ services:
 
 networks:
   consul-net:
+    name: fm-consul-network
