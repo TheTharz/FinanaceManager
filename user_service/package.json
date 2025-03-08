@@ -4,11 +4,15 @@
   "description": "user service for the finance manager application with micro service architecture",
   "main": "index.ts",
   "scripts": {
+    "start": "tsc && node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tharindu Jayawardhana",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.8.2",
     "express": "^4.21.2"
   },
   "devDependencies": {

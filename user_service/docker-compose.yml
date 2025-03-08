@@ -5,16 +5,15 @@ services:
     image: fm-user-service:latest
     container_name: fm-user-service
     restart: always
-    depends_on:
-      - postgres
     networks:
       - fm-network
     env_file:
       - .env
     ports:
       - '5000:5000'
-    command: >
-      sh -c "node server.js"
+    build:
+      context: .
+      dockerfile: Dockerfile
 
   postgres:
     image: postgres:17
@@ -26,8 +25,6 @@ services:
       - POSTGRES_PASSWORD=${USER_DB_PASS}
     networks:
       - fm-network
-    volumes:
-      - user-db-data:/var/lib/postgresql/data
 
 networks:
   fm-network:
