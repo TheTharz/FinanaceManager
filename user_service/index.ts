@@ -3,11 +3,11 @@ const axios = require('axios');
 const app = express();
 const PORT = 5000;
 
-const CONSUL_HOST = process.env.CONSUL_HOST || 'http://consul'; // Consul's address
+const CONSUL_HOST = 'http://consul:8500'; // Consul's address
 const SERVICE_NAME = 'user-service';
 const SERVICE_ID = `${SERVICE_NAME}-${PORT}`;
 
-const healthCheckURL = `http://user-service/health`;
+const healthCheckURL = `http://user-service:${PORT}/health`; // Corrected to localhost
 
 // Register service in Consul
 const registerServiceInConsul = async () => {
