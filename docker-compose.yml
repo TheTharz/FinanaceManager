@@ -10,8 +10,8 @@ services:
       - '8600:8600/udp'
     command: 'agent -server -bootstrap-expect=1 -client=0.0.0.0 -ui'
     networks:
-      - consul-net
+      - fm-network
 
 networks:
-  consul-net:
-    name: fm-consul-network
+  fm-network:
+    name: fm-network
