@@ -5,6 +5,8 @@ import {
 } from './src/services/consulService';
 import dotenv from 'dotenv';
 import healthRoute from './src/routes/healthRoute';
+import { testDbConnection } from './src/config/postgresDatabaseConfig';
+
 dotenv.config();
 
 const app = express();
@@ -16,6 +18,7 @@ app.use('/', healthRoute);
 // Start the server
 const server = app.listen(PORT, async () => {
   console.log(`Server is successfully running on port ${PORT}`);
+  await testDbConnection();
   await registerServiceInConsul();
 });
 

@@ -1,5 +1,5 @@
-import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import { Pool } from 'pg';
 
 // Load environment variables from a .env file
 dotenv.config();
