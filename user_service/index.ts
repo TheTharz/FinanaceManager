@@ -4,20 +4,14 @@ import {
   deregisterServiceFromConsul,
 } from './src/services/consulService';
 import dotenv from 'dotenv';
-
+import healthRoute from './src/routes/healthRoute';
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
 
-// Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'ok',
-    message: 'The server is up and running!',
-    timestamp: new Date().toISOString(),
-  });
-});
+// Register routes
+app.use('/', healthRoute);
 
 // Start the server
 const server = app.listen(PORT, async () => {
