@@ -1,43 +1,17 @@
-const express = require('express');
-const axios = require('axios');
+import express, { Request, Response } from 'express';
+import {
+  registerServiceInConsul,
+  deregisterServiceFromConsul,
+} from './src/services/consulService';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const app = express();
-const PORT = 5000;
-
-const CONSUL_HOST = 'http://consul:8500'; // Consul's address
-const SERVICE_NAME = 'user-service';
-const SERVICE_ID = `${SERVICE_NAME}-${PORT}`;
-
-const healthCheckURL = `http://user-service:${PORT}/health`; // Corrected to localhost
-
-// Register service in Consul
-const registerServiceInConsul = async () => {
-  const serviceRegistration = {
-    ID: SERVICE_ID,
-    Name: SERVICE_NAME,
-    Tags: ['nodejs', 'express'],
-    Address: 'user-service', // Address of the service
-    Port: PORT, // Port number the service is running on
-    Check: {
-      http: healthCheckURL,
-      interval: '10s', // Interval for health check
-      timeout: '5s', // Timeout for health check
-      deregisterCriticalServiceAfter: '60s', // Deregister service if health check fails for more than 60 seconds
-    },
-  };
-
-  try {
-    const response = await axios.put(
-      `${CONSUL_HOST}/v1/agent/service/register`,
-      serviceRegistration
-    );
-    console.log('Service registered in Consul:', response.data);
-  } catch (error) {
-    console.error('Error registering service in Consul:', error);
-  }
-};
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
 
 // Health check endpoint
-app.get('/health', (req: any, res: any) => {
+app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({
     status: 'ok',
     message: 'The server is up and running!',
@@ -45,11 +19,27 @@ app.get('/health', (req: any, res: any) => {
   });
 });
 
-app.listen(PORT, (error: any) => {
-  if (!error) {
-    console.log(
-      'Server is Successfully Running, and App is listening on port ' + PORT
-    );
-    registerServiceInConsul(); // Register service after the server starts
-  } else console.log("Error occurred, server can't start", error);
+// Start the server
+const server = app.listen(PORT, async () => {
+  console.log(`Server is successfully running on port ${PORT}`);
+  await registerServiceInConsul();
+});
+
+// Handle graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('Shutting down gracefully...');
+  await deregisterServiceFromConsul();
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Received SIGTERM, shutting down...');
+  await deregisterServiceFromConsul();
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
