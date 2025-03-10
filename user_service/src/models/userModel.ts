@@ -4,15 +4,24 @@ import {
   Model,
   DataType,
   BelongsToMany,
+  PrimaryKey,
+  Default,
+  AutoIncrement,
 } from 'sequelize-typescript';
 import { UserRole } from './userRoleModel';
 
 @Table({
   tableName: 'users',
-  timestamps: true, // Enables createdAt and updatedAt fields
+  timestamps: true,
 })
 export class User extends Model {
-  declare id: string; // Use 'declare' to avoid conflict with the base Model class
+  @PrimaryKey
+  @AutoIncrement
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  declare id: number;
 
   @Column({
     type: DataType.STRING,
@@ -45,18 +54,6 @@ export class User extends Model {
     unique: true,
   })
   phone_number?: string;
-
-  @Column({
-    type: DataType.DATE,
-    defaultValue: DataType.NOW,
-  })
-  created_at!: Date;
-
-  @Column({
-    type: DataType.DATE,
-    defaultValue: DataType.NOW,
-  })
-  updated_at!: Date;
 
   @BelongsToMany(() => UserRole, 'user_roles', 'user_id', 'role_id')
   roles!: UserRole[];
