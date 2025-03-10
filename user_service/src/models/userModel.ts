@@ -3,7 +3,6 @@ import {
   Column,
   Model,
   DataType,
-  HasMany,
   BelongsToMany,
 } from 'sequelize-typescript';
 import { UserRole } from './userRoleModel';
@@ -13,12 +12,7 @@ import { UserRole } from './userRoleModel';
   timestamps: true, // Enables createdAt and updatedAt fields
 })
 export class User extends Model {
-  @Column({
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
-    primaryKey: true,
-  })
-  id!: string;
+  declare id: string; // Use 'declare' to avoid conflict with the base Model class
 
   @Column({
     type: DataType.STRING,
@@ -64,7 +58,6 @@ export class User extends Model {
   })
   updated_at!: Date;
 
-  // Define associations
   @BelongsToMany(() => UserRole, 'user_roles', 'user_id', 'role_id')
   roles!: UserRole[];
 }
