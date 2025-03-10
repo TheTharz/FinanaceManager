@@ -6,6 +6,7 @@ import {
 import dotenv from 'dotenv';
 import healthRoute from './src/routes/healthRoute';
 import { testDbConnection } from './src/config/postgresDatabaseConfig';
+import { syncDatabase } from './src/models';
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ app.use('/', healthRoute);
 // Start the server
 const server = app.listen(PORT, async () => {
   console.log(`Server is successfully running on port ${PORT}`);
-  await testDbConnection();
+  await testDbConnection().then(syncDatabase);
   await registerServiceInConsul();
 });
 
